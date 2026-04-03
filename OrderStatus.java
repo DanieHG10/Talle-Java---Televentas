@@ -1,0 +1,3 @@
+public enum OrderStatus {
+    PENDIENTE, CONFIRMADO, LLENO, ENVIADO, ENTREGADO, CANCELADO
+}
