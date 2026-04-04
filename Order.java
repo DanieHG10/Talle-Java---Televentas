@@ -6,8 +6,8 @@ public class Order {
     private String customerName; // <-- Cambiamos customerId por customerName
     private List<OrderItem> items;
     private OrderStatus status;
-    private String trackingNumber; // NUEVO
-    private String notes; // NUEVO
+    private String trackingNumber;
+    private String notes;
 
     // Actualizamos el constructor para recibir el nombre
     public Order(String orderId, String customerName, String deliveryAddress) {

@@ -35,7 +35,6 @@ public class OrderService {
             order.setPaymentStatus(PaymentStatus.APROBADO);
             order.setStatus(OrderStatus.CONFIRMADO);
             
-            // Le quitamos los espacios al nombre para simular un correo válido
             String correoSimulado = order.getCustomerName().replace(" ", "").toLowerCase() + "@televentas.com";
             notificationService.sendOrderConfirmation(correoSimulado, orderId);
             
