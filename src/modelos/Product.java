@@ -1,3 +1,5 @@
+package modelos;
+
 public class Product {
     private String codigo;
     private String descripcion;

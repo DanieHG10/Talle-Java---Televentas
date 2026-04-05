@@ -1,3 +1,7 @@
+package services;
+
+import interfaces.*;
+
 public class EmailNotificationService implements INotificationService {
     
     @Override

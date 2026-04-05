@@ -1,5 +1,9 @@
-import java.util.ArrayList;
-import java.util.List;
+package services;
+
+import interfaces.*;
+import modelos.*;
+
+import java.util.*;
 
 public class WarehouseService {
     private OrderService orderService;

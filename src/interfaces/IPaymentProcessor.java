@@ -1,3 +1,5 @@
+package interfaces;
+
 import java.util.Map;
 
 public interface IPaymentProcessor {

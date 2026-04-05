@@ -1,3 +1,8 @@
+package services;
+
+import interfaces.*;
+import modelos.*;
+
 public class ComplaintService {
     private INotificationService notificationService;
     private int complaintCounter = 0;

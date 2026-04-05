@@ -1,6 +1,12 @@
+package main;
+
 import java.util.Scanner;
 import java.util.List;
 import java.util.HashMap;
+
+import interfaces.*;
+import modelos.*;
+import services.*;
 
 public class TeleventasUI {
     private OrderService orderService;

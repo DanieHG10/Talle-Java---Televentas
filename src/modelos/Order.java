@@ -1,5 +1,6 @@
-import java.util.ArrayList;
-import java.util.List;
+package modelos;
+
+import java.util.*;
 
 public class Order {
     private String orderId;

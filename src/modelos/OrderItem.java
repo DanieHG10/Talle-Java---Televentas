@@ -1,3 +1,5 @@
+package modelos;
+
 public class OrderItem {
     private String productCode;
     private String productDescription;

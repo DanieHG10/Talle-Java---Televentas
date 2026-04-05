@@ -1,3 +1,5 @@
+package modelos;
+
 public class Complaint {
     public static final Complaint RETRASO_EN_LA_ENTREGA = null;
 	public static final Complaint OTROS = null;

@@ -1,3 +1,5 @@
+package enums;
+
 public enum TipoQueja {
     RETRASO_EN_LA_ENTREGA, 
     PRODUCTO_DANADO, 

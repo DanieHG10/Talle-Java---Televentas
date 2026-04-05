@@ -1,4 +1,8 @@
+package interfaces;
+
 import java.util.List;
+
+import modelos.Product;
 
 public interface IInventoryService {
     Product getProductInfo(String productCode);

@@ -1,3 +1,5 @@
+package modelos;
+
 public class TransportCompany {
     private String companyId;
     private String name;
