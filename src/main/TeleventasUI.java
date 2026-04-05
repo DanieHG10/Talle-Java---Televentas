@@ -3,10 +3,15 @@ package main;
 import java.util.Scanner;
 import java.util.List;
 import java.util.HashMap;
-
+import java.util.Map;
 import interfaces.*;
 import modelos.*;
 import services.*;
+import enums.*;
+import enums.PaymentStatus;
+import enums.OrderStatus;
+import enums.TipoQueja;
+import enums.PaymentMethod;
 
 public class TeleventasUI {
     private OrderService orderService;
@@ -55,8 +60,10 @@ public class TeleventasUI {
             System.out.println("1. Consultar Catálogo de Productos");
             System.out.println("2. Suscribirse al Catálogo (Correo)");
             System.out.println("3. Crear Orden de Compra");
-            System.out.println("4. Cancelar Orden");
-            System.out.println("5. Volver al menú principal");
+            System.out.println("4. Ver Mis Órdenes");
+            System.out.println("5. Pagar una Orden");
+            System.out.println("6. Cancelar Orden");
+            System.out.println("7. Volver al menú principal");
             System.out.print("Opción: ");
             String opcion = scanner.nextLine();
             
@@ -78,6 +85,12 @@ public class TeleventasUI {
                     crearOrdenUI();
                     break;
                 case "4":
+                    verMisOrdenesUI();
+                    break;
+                case "5":
+                    pagarOrdenUI();
+                    break;
+                case "6":
                     System.out.print("Ingrese el ID de la orden a cancelar (ej. ORD-000001): ");
                     String orderId = scanner.nextLine();
                     Order orderToCancel = orderService.getOrder(orderId);
@@ -88,7 +101,7 @@ public class TeleventasUI {
                         System.out.println("❌ No se encontró la orden o ya no puede ser cancelada.");
                     }
                     break;
-                case "5": volver = true; break;
+                case "7": volver = true; break;
                 default: System.out.println("❌ Opción no válida.");
             }
         }
@@ -101,7 +114,7 @@ public class TeleventasUI {
         String direccion = scanner.nextLine();
         
         Order order = orderService.createOrder(nombreCliente, direccion);
-        System.out.println("✅ Orden creada con ID: " + order.getOrderId());
+        System.out.println("✅ Orden inicializada con ID: " + order.getOrderId());
 
         boolean agregando = true;
         while (agregando) {
@@ -114,9 +127,13 @@ public class TeleventasUI {
                 Product p = inventoryService.getProductInfo(codigo);
                 if (p != null) {
                     System.out.print("Cantidad a llevar: ");
-                    int cantidad = Integer.parseInt(scanner.nextLine());
-                    order.addItem(new OrderItem(p.getCodigo(), p.getDescripcion(), cantidad, p.getPrecio()));
-                    System.out.println("✅ Producto agregado.");
+                    try {
+                        int cantidad = Integer.parseInt(scanner.nextLine());
+                        order.addItem(new OrderItem(p.getCodigo(), p.getDescripcion(), cantidad, p.getPrecio()));
+                        System.out.println("✅ Producto agregado.");
+                    } catch (NumberFormatException e) {
+                        System.out.println("❌ Por favor ingrese un número válido.");
+                    }
                 } else {
                     System.out.println("❌ Producto no encontrado.");
                 }
@@ -124,13 +141,86 @@ public class TeleventasUI {
         }
 
         if (order.getItems().size() > 0) {
-            System.out.println("\n💳 Total a pagar: $" + order.getTotalAmount());
-            System.out.println("Procesando pago automático con Tarjeta de Crédito...");
-            String resultado = orderService.processPayment(order.getOrderId(), PaymentMethod.TARJETA_DE_CREDITO, new HashMap<>());
-            System.out.println(resultado);
+            System.out.println("\n🛒 Orden " + order.getOrderId() + " creada exitosamente.");
+            System.out.println("💳 Total a pagar: $" + order.getTotalAmount());
+            System.out.println("⚠️ Estado: PENDIENTE DE PAGO. Por favor use la opción 5 del menú para pagar.");
         } else {
-            System.out.println("Orden vacía. Se descartará.");
+            System.out.println("\n❌ Orden vacía. Se descartará.");
+            order.setStatus(OrderStatus.CANCELADO); 
         }
+    }
+
+    private void verMisOrdenesUI() {
+        System.out.print("Ingrese su nombre (tal como lo registró): ");
+        String nombre = scanner.nextLine();
+        
+        System.out.println("\n--- SUS ÓRDENES ---");
+        boolean encontradas = false;
+        
+        for (Order order : orderService.getAllOrders()) {
+            if (order.getCustomerName().equalsIgnoreCase(nombre)) {
+                System.out.println("🔹 ID Orden: " + order.getOrderId());
+                System.out.println("   Estado del Pedido: " + order.getStatus().name());
+                System.out.println("   Estado del Pago: " + order.getPaymentStatus().name());
+                System.out.println("   Total: $" + order.getTotalAmount());
+                if (order.getTrackingNumber() != null) {
+                    System.out.println("   Guía de Envío: " + order.getTrackingNumber());
+                }
+                System.out.println("-------------------------");
+                encontradas = true;
+            }
+        }
+        
+        if (!encontradas) {
+            System.out.println("❌ No se encontraron órdenes a nombre de " + nombre);
+        }
+    }
+
+    private void pagarOrdenUI() {
+        System.out.print("Ingrese el ID de la orden que desea pagar (ej. ORD-000001): ");
+        String orderId = scanner.nextLine();
+        
+        Order order = orderService.getOrder(orderId);
+        
+        if (order == null) {
+            System.out.println("❌ Orden no encontrada.");
+            return;
+        }
+        
+        if (order.getPaymentStatus() == PaymentStatus.APROBADO) {
+            System.out.println("⚠️ Esta orden ya se encuentra pagada.");
+            return;
+        }
+        
+        if (order.getStatus() == OrderStatus.CANCELADO) {
+            System.out.println("❌ No se puede pagar una orden cancelada.");
+            return;
+        }
+
+        System.out.println("\nMonto a pagar: $" + order.getTotalAmount());
+        System.out.println("--- DATOS DE TARJETA DE CRÉDITO ---");
+        
+        System.out.print("Número de Tarjeta (16 dígitos): ");
+        String numTarjeta = scanner.nextLine();
+        
+        System.out.print("Fecha de Vencimiento (MM/AA): ");
+        String fecha = scanner.nextLine();
+        
+        System.out.print("Código de Seguridad (CVV): ");
+        String cvv = scanner.nextLine();
+        
+        System.out.print("Nombre del Titular: ");
+        String titular = scanner.nextLine();
+
+        Map<String, String> cardDetails = new HashMap<>();
+        cardDetails.put("card_number", numTarjeta);
+        cardDetails.put("expiry", fecha);
+        cardDetails.put("cvv", cvv);
+        cardDetails.put("cardholder_name", titular);
+
+        System.out.println("\nProcesando pago...");
+        String resultado = orderService.processPayment(orderId, PaymentMethod.TARJETA_DE_CREDITO, cardDetails);
+        System.out.println(resultado);
     }
 
     private void menuDeposito() {
@@ -178,10 +268,10 @@ public class TeleventasUI {
         System.out.print("Seleccione motivo: ");
         String motivo = scanner.nextLine();
         
-        Complaint tipo = Complaint.OTROS;
-        if (motivo.equals("1")) tipo = Complaint.RETRASO_EN_LA_ENTREGA;
-        if (motivo.equals("2")) tipo = Complaint.PRODUCTO_DANADO;
-        if (motivo.equals("3")) tipo = Complaint.PROBLEMAS_DE_CALIDAD;
+        TipoQueja tipo = TipoQueja.OTROS;
+        if (motivo.equals("1")) tipo = TipoQueja.RETRASO_EN_LA_ENTREGA;
+        if (motivo.equals("2")) tipo = TipoQueja.PRODUCTO_DANADO;
+        if (motivo.equals("3")) tipo = TipoQueja.PROBLEMAS_DE_CALIDAD;
 
         System.out.print("Describa su problema: ");
         String desc = scanner.nextLine();
@@ -191,20 +281,21 @@ public class TeleventasUI {
     }
 
     public static void main(String[] args) {
-        // Inicialización de todas las dependencias
         IPaymentProcessor payment = new CreditCardPaymentProcessor(); 
         IInventoryService inventory = new InventoryService();
         INotificationService notification = new EmailNotificationService();
         ITransportService transport = new TransportServiceImpl();
         
-        // Servicios de Lógica
         OrderService orderService = new OrderService(payment, inventory, notification);
         WarehouseService warehouseService = new WarehouseService(orderService, transport, inventory);
         ComplaintService complaintService = new ComplaintService(notification);
         
         TeleventasUI ui = new TeleventasUI(orderService, warehouseService, inventory, complaintService);
         
-        System.out.println("      SISTEMA TELEVENTAS - GESTIÓN DE COMPRAS A DISTANCIA     ");        
+        System.out.println("----------------------------------------------------------------");
+        System.out.println("       SISTEMA TELEVENTAS - GESTIÓN DE COMPRAS A DISTANCIA      ");
+        System.out.println("----------------------------------------------------------------");
+
         ui.iniciar();
     }
 }

@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import interfaces.*;
 import modelos.Order;
-import modelos.OrderStatus;
-import modelos.PaymentStatus;
+import enums.*;
+import enums.OrderStatus;
+import enums.PaymentStatus;
 
 public class OrderService {
     private IPaymentProcessor paymentProcessor;
@@ -31,11 +32,11 @@ public class OrderService {
         return order;
     }
 
-    public String processPayment(String orderId, PaymentMethod method, Map<String, String> cardDetails) {
+    public String processPayment(String orderId, PaymentMethod tarjetaDeCredito, Map<String, String> cardDetails) {
         Order order = orders.get(orderId);
         if (order == null) return "Orden no encontrada";
         
-        boolean success = paymentProcessor.processPayment(order.getTotalAmount(), method, cardDetails);
+        boolean success = paymentProcessor.processPayment(order.getTotalAmount(), tarjetaDeCredito, cardDetails);
         
         if (success) {
             order.setPaymentStatus(PaymentStatus.APROBADO);

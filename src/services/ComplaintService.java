@@ -1,5 +1,6 @@
 package services;
 
+import enums.TipoQueja;
 import interfaces.*;
 import modelos.*;
 
@@ -11,14 +12,13 @@ public class ComplaintService {
         this.notificationService = notificationService;
     }
 
-    public Complaint createComplaint(String customerName, Complaint type, String description) {
+    public Complaint createComplaint(String customerName, TipoQueja tipo, String description) {
         this.complaintCounter++;
         String complaintId = String.format("COMP-%06d", this.complaintCounter);
-        Complaint complaint = new Complaint(complaintId, customerName, type, description);
+        Complaint complaint = new Complaint(complaintId, customerName, tipo, description);
         
-        // CUMPLIENDO EL ENUNCIADO: Notificar al gerente inmediatamente
         String subject = "Urgente: Nueva Queja " + complaintId;
-        String body = "Cliente: " + customerName + "\nTipo: " + type.name() + "\nDescripción: " + description;
+        String body = "Cliente: " + customerName + "\nTipo: " + tipo.name() + "\nDescripción: " + description;
         notificationService.sendEmail("gerente_relaciones@televentas.com", subject, body);
         
         return complaint;

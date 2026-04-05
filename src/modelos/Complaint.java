@@ -1,5 +1,8 @@
 package modelos;
 
+import enums.EstadoQueja;
+import enums.TipoQueja;
+
 public class Complaint {
     public static final Complaint RETRASO_EN_LA_ENTREGA = null;
 	public static final Complaint OTROS = null;
@@ -9,7 +12,7 @@ public class Complaint {
     private String customerName; // Usando Nombre en vez de ID como pediste
     private EstadoQueja status;
 
-    public Complaint(String complaintId, String customerName, Complaint type, String description) {
+    public Complaint(String complaintId, String customerName, TipoQueja tipo, String description) {
         this.complaintId = complaintId;
         this.customerName = customerName;
         this.status = EstadoQueja.ABIERTO;

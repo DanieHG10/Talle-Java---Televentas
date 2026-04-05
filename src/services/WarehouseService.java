@@ -5,6 +5,8 @@ import modelos.*;
 
 import java.util.*;
 
+import enums.OrderStatus;
+
 public class WarehouseService {
     private OrderService orderService;
     private ITransportService transportService;

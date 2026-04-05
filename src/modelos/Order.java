@@ -1,21 +1,28 @@
 package modelos;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import enums.OrderStatus;
+import enums.PaymentStatus;
 
 public class Order {
     private String orderId;
-    private String customerName; // <-- Cambiamos customerId por customerName
+    private String customerName;
     private List<OrderItem> items;
     private OrderStatus status;
+    private PaymentStatus paymentStatus;
+    private String deliveryAddress;
     private String trackingNumber;
     private String notes;
 
-    // Actualizamos el constructor para recibir el nombre
     public Order(String orderId, String customerName, String deliveryAddress) {
         this.orderId = orderId;
-        this.customerName = customerName; 
+        this.customerName = customerName;
+        this.deliveryAddress = deliveryAddress;
         this.items = new ArrayList<>();
+
         this.status = OrderStatus.PENDIENTE;
+        this.paymentStatus = PaymentStatus.PENDIENTE; 
     }
 
     public double getTotalAmount() {
@@ -35,16 +42,19 @@ public class Order {
     }
 
     public String getOrderId() { return orderId; }
-    
-    // Nuevo getter para obtener el nombre
-    public String getCustomerName() { return customerName; } 
+    public String getCustomerName() { return customerName; }
+    public List<OrderItem> getItems() { return items; }
     
     public OrderStatus getStatus() { return status; }
-    public void setStatus(OrderStatus status) { this.status = status; }
-    public void setPaymentStatus(PaymentStatus paymentStatus) { }
+    public void setStatus(OrderStatus status) { this.status = status; }    
+    public PaymentStatus getPaymentStatus() { return paymentStatus; } 
+    public void setPaymentStatus(PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; }
+    
+    public String getDeliveryAddress() { return deliveryAddress; }
+    
     public String getTrackingNumber() { return trackingNumber; }
     public void setTrackingNumber(String trackingNumber) { this.trackingNumber = trackingNumber; }
+    
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
-    public List<OrderItem> getItems() { return items; }
 }

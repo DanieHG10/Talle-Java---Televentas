@@ -11,8 +11,8 @@ public class TransportServiceImpl implements ITransportService {
     public TransportServiceImpl() {
         this.companies = new HashMap<>();
         // Simulamos empresas colombianas para darle un toque local
-        companies.put("TRANS-1", new TransportCompany("TRANS-1", "Servientrega", 15.0));
-        companies.put("TRANS-2", new TransportCompany("TRANS-2", "Inter Rapidísimo", 10.0));
+        companies.put("TRANS-1", new TransportCompany("TRANS-1", "Servientrega", 15000));
+        companies.put("TRANS-2", new TransportCompany("TRANS-2", "Inter Rapidísimo", 10000));
     }
 
     @Override

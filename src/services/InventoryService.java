@@ -15,6 +15,8 @@ public class InventoryService implements IInventoryService {
         this.products = new HashMap<>();
         products.put("PROD-001", new Product("PROD-001", "Laptop Dell Inspiron", 2500000, 15, "Electrónica"));
         products.put("PROD-002", new Product("PROD-002", "Mouse Inalámbrico", 80000, 50, "Accesorios"));
+        products.put("PROD-003", new Product("PROD-003", "Teclado Mecánico", 200000, 25, "Accesorios"));
+        products.put("PROD-004", new Product("PROD-004", "Monitor 27 4K", 1200000, 8, "Monitores"));
     }
 
     @Override
